@@ -1,0 +1,2 @@
+#!/bin/bash
+mvn clean install -Dquarkus.container-image.push=true
