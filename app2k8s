@@ -1,2 +1,4 @@
 #!/bin/bash
+kubectl apply -f src/main/kubernetes/kubernetes.yml
+kubectl apply -f src/main/kubernetes/process-db.yaml
 mvn clean install -Dquarkus.kubernetes.deploy=true
