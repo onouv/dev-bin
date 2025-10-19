@@ -21,3 +21,5 @@ pw=$(base64 <<< "$password")
 kubectl create -n "$namespace" secret generic "${dbName}-credentials" \
 --from-literal=db-username="$usr" \
 --from-literal=db-password="$pw"
+kubectl apply -f src/main/kubernetes/process-db.yaml
+
