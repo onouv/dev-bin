@@ -1,0 +1,7 @@
+#!/bin/bash
+name=$1
+if [ -z $name ]; then
+  tmux kill-session
+fi
+
+tmux kill-session -t $name
