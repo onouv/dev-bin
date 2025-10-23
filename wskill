@@ -1,7 +1,19 @@
 #!/bin/bash
-name=$1
-if [ -z $name ]; then
-  tmux kill-session
-fi
 
-tmux kill-session -t $name
+name=$1
+# have we given a session name ?
+if [ -n "$name" ]; then
+  tmux kill-session -t "$name"
+else
+  # are we in a tmux session ?
+  if [[ -n $TMUX ]]; then
+    # yes
+    session=$(tmux display-message -p "#S")
+    read -p "No session name specified - do you mean to kill *this* session [$session] ? (y|N) " -r approval
+    if [ "$approval" = "y" -o "$approval" = "Y" ]; then
+      tmux kill-session -t "$session"
+    fi
+  else
+    echo "Not in a session."
+  fi
+fi
