@@ -7,7 +7,7 @@ fi
 
 # check if a minikube cluster is running
 if ! [[ $(kubectl cluster-info) =~ (is running at) ]]; then
-  echo "No minikube k8s cluster running!"
+  echo "No k8s cluster running!"
   exit -1
 fi
 
