@@ -1,28 +1,50 @@
 #!/bin/bash
-session=$1
-if [ -z $session ]; then
-  session=default
+
+if [[ "$1" =~ --help|-h ]]; then
+  echo "usage: wsstart [session-name] [directory]"
+  exit 0
 fi
+
+# check if a minikube cluster is running
+if ! [[ $(kubectl cluster-info) =~ (is running at) ]]; then
+  echo "No minikube k8s cluster running!"
+  exit -1
+fi
+
+session=$1
 echo $session
+if ! [ -z $session ]; then
+  namespace="$session"
+else
+  session=default
+  read -p "enter kubernetes namespace: " -r namespace
+fi
+
+if [ -z $namespace ]; then
+  namespace=default
+fi
+
+# check if this namespace exists
+checkResult="$(kubectl get namespace $namespace 2>&1)"
+if [[ checkResult =~ (Error)|(NotFound) ]]; then
+  kubectl create namespace "$namespace"
+fi
+
+kubectl config set-context --current --namespace=$namespace
+
 homedir=$2
 if [ -z $homedir ]; then
   homedir="./"
 fi
-echo $homedir
-function k8s_set_namespace() {
-  pane=$1
-  namespace=$2
-  tmux send-keys -t $pane "kubectl config set-context --current --namespace=$namespace"
-}
 
 function k8s_watch_services() {
   pane=$1
-  tmux send-keys -t $pane "kubectl get svc -w"
+  tmux send-keys -t $pane "kubectl get svc -w" C-m
 }
 
 function k8s_watch_pods() {
   pane=$1
-  tmux send-keys -t $pane "kubectl get pods -w"
+  tmux send-keys -t $pane "kubectl get pods -w" C-m
 }
 
 function set_folder() {
@@ -30,11 +52,8 @@ function set_folder() {
   tmux send-keys -t $pane "cd $homedir; clear" C-m
 }
 
-#github_passw=$(pass repos/github/ssh/vivo_20240212_ed25519)
-github_passw=github
-#docker_passw=$(pass registries/dockerhub/tokens/build)
-docker_passw=dockerhub
-#session_exists=$(tmux list-sessions | grep $session)
+github_passw=$(pass repos/github/ssh/vivo_20240212_ed25519)
+docker_passw=$(pass registries/dockerhub/tokens/build)
 
 # Check if the session exists, discarding output
 # We can check $? for the exit status (zero for success, non-zero for failure)
@@ -49,11 +68,10 @@ if [ $? != 0 ]; then
   tmux split-window -t $session:2
   tmux split-window -t $session:2.0 -h
   set_folder $session:2.0
-  tmux send-keys -t $session:2.0 'k get svc -w'
+  k8s_watch_pods $session:2.0
   set_folder $session:2.1
-  tmux send-keys -t $session:2.1 "k get pods -w"
+  k8s_watch_services $session:2.1
   set_folder $session:2.2
-  tmux send-keys -t $session:2.2 "mnk-start"
   tmux select-pane -t $session:2.2
 fi
 tmux attach-session -t $session:0
