@@ -63,15 +63,19 @@ if [ $? != 0 ]; then
   tmux rename-window -t $session:0 "dev"
   tmux new-window -t $session:1 -n "build"
   set_folder $session:1
-  tmux new-window -t $session:2 -n "k8s"
+
+  tmux new-window -t $session:2 -n "test"
   set_folder $session:2
-  tmux split-window -t $session:2
-  tmux split-window -t $session:2.0 -h
-  set_folder $session:2.0
-  k8s_watch_pods $session:2.0
-  set_folder $session:2.1
-  k8s_watch_services $session:2.1
-  set_folder $session:2.2
-  tmux select-pane -t $session:2.2
+
+  tmux new-window -t $session:3 -n "k8s"
+  set_folder $session:3
+  tmux split-window -t $session:3
+  tmux split-window -t $session:3.0 -h
+  set_folder $session:3.0
+  k8s_watch_pods $session:3.0
+  set_folder $session:3.1
+  k8s_watch_services $session:3.1
+  set_folder $session:3.2
+  tmux select-pane -t $session:3.2
 fi
 tmux attach-session -t $session:0
