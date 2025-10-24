@@ -6,9 +6,14 @@ if [[ "$1" =~ --help|-h ]]; then
 fi
 
 # check if a minikube cluster is running
-if ! [[ $(kubectl cluster-info) =~ (is running at) ]]; then
+if ! [[ $(timeout 5 kubectl cluster-info) =~ (is running at) ]]; then
   echo "No k8s cluster running!"
-  exit -1
+
+  ~/bin/mnk-start
+  if [ $? -lt 0 ]; then
+    echo "some error while staring up minikube"
+    exit -1
+  fi
 fi
 
 session=$1
