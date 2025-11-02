@@ -3,7 +3,7 @@
 # Use to create a blank but executable new bash script
 #
 if [ -z "$1" ]; then
-  echo "Must provide a script name!"
+  echo "usage: script <my-script-name>"
   exit -1
 fi
 script=$1
