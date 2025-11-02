@@ -63,13 +63,20 @@ function isLoggedIn() {
 #####################################################################################
 ### MAIN SECTION ###
 #####################################################################################
-
-# retrieve credentials from user
-#echo Dockerhub user name ?
-#read user
 user=rabaul
-echo "Dockerhub password for ${user}?"
-read -s password
+
+# have we been given a password as parameter ?
+if [ $# -eq 0 ]; then
+  #No
+  # retrieve credentials from user
+  #echo Dockerhub user name ?
+  #read user
+  echo "Dockerhub password for ${user}?"
+  read -s password
+else
+  #yes
+  password=$1
+fi
 
 # make sure credentials match auth token
 loggedIn=$(isLoggedIn)

@@ -57,8 +57,11 @@ function set_folder() {
   tmux send-keys -t $pane "cd $homedir; clear" C-m
 }
 
+#### Main section ####
+
 github_passw=$(pass repos/github/ssh/vivo_20240212_ed25519)
 docker_passw=$(pass registries/dockerhub/tokens/build)
+dck-init $docker_passw
 
 # Check if the session exists, discarding output
 # We can check $? for the exit status (zero for success, non-zero for failure)

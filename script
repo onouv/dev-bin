@@ -1,0 +1,12 @@
+#!/bin/bash
+#
+# Use to create a blank but executable new bash script
+#
+if [ -z "$1" ]; then
+  echo "Must provide a script name!"
+  exit -1
+fi
+script=$1
+echo '#!/bin/bash' >>"$script"
+chmod u+x "$script"
+nvim "$script"
