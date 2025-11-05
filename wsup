@@ -1,0 +1,84 @@
+#!/bin/bash
+
+function k8s_watch_services() {
+  pane=$1
+  tmux send-keys -t $pane "kubectl get svc -w" C-m
+}
+
+function k8s_watch_pods() {
+  pane=$1
+  tmux send-keys -t $pane "kubectl get pods -w" C-m
+}
+
+function set_folder() {
+  pane=$1
+  tmux send-keys -t $pane "cd $homedir; clear" C-m
+}
+
+if [[ "$1" =~ -h ]]; then
+  echo "wsup allows to start up a tmux workspace with several windows and initialized github and dockerhub environment. K8s minikube cluster startup optional."
+  echo "usage: wsup [[-h] | [-k [namespace]]]"
+  echo "-h          this help"
+  echo "-k          with minikube kubernetes cluster"
+  echo "namespace   set kubectl default namespace to namespace"
+  exit 0
+fi
+
+# login dockerhub
+DOCKER_PASSW=$(pass registries/dockerhub/tokens/build)
+dck-init $DOCKER_PASSW
+
+# login github cli
+GITHUB_CLI_TOKEN="$(pass repos/github/token)"
+echo "$GITHUB_CLI_TOKEN" | gh auth login -p ssh --with-token
+
+# retrieve tmux session name
+read -p "Session name: " -r session
+
+#kubernetes requested ?
+if ! [ -z $1 ]; then
+  if [[ "$1" =~ -k ]]; then
+    k8s_requested=true
+    # start a cluster, if not already up
+    if ! [[ $(timeout 5 kubectl cluster-info) =~ (is running at) ]]; then
+      echo "No k8s cluster running..."
+
+      ~/bin/mnk-start
+      if [ $? -lt 0 ]; then
+        echo "error while starting up minikube"
+        exit -1
+      fi
+    fi
+    # set default namespace if requested
+    if ! [ -z $2 ]; then
+      kubectl config set-context --current --namespace=$2
+    fi
+  fi
+fi
+
+# Check if the session exists, discarding output
+# We can check $? for the exit status (zero for success, non-zero for failure)
+tmux has-session -t $session 2>/dev/null
+if [ $? != 0 ]; then
+  tmux new-session -d -s $session -e DOCKER_PASSW=$DOCKER_PASSW -e GITHUB_CLI_TOKEN=$GITHUB_CLI_TOKEN
+  tmux rename-window -t $session:0 "dev"
+  tmux new-window -t $session:1 -n "build"
+  #set_folder $session:1
+
+  tmux new-window -t $session:2 -n "test"
+  set_folder $session:2
+
+  if [ "$k8s_requested" = true ]; then
+    tmux new-window -t $session:3 -n "k8s"
+    #set_folder $session:3
+    tmux split-window -t $session:3
+    tmux split-window -t $session:3.0 -h
+    #set_folder $session:3.0
+    k8s_watch_pods $session:3.0
+    #set_folder $session:3.1
+    k8s_watch_services $session:3.1
+    #set_folder $session:3.2
+    tmux select-pane -t $session:3.2
+  fi
+fi
+tmux attach-session -t $session:0
