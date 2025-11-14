@@ -10,3 +10,6 @@
 | **`mnk-services`** |  list the services available on minikube node  |
 | wsup | start up a tmux workspace with github/docker/k8s env |
 | wskill | kill a tmux workspace |
+| gitclip | take git ssh password into CTRL-SHIFT-V clipboard (in wsup workspace) |
+| dockerclip | take docker password into CTRL-SHIFT-V clipboard (in wsup workspace) |
+| unclip | erase CTRL-SHIFT-V clipboard |

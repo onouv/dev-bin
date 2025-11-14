@@ -1,0 +1,2 @@
+#!/bin/bash
+echo -n $DOCKER_PASSW | xclip -selection clipboard
