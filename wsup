@@ -57,7 +57,7 @@ fi
 # We can check $? for the exit status (zero for success, non-zero for failure)
 tmux has-session -t $session 2>/dev/null
 if [ $? != 0 ]; then
-  tmux new-session -d -s $session -e DOCKER_PASSW=$DOCKER_PASSW -e GITHUB_CLI_TOKEN=$GITHUB_CLI_TOKEN
+  tmux new-session -d -s $session -e DOCKER_PASSW=$DOCKER_PASSW -e GITHUB_CLI_TOKEN=$GITHUB_CLI_TOKEN -e GIT_SSH_PASSW=$GIT_SSH_PASSW
   tmux rename-window -t $session:0 "dev"
   tmux new-window -t $session:1 -n "build"
 
