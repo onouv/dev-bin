@@ -1,2 +1,0 @@
-#!/bin/bash
-echo -n $GIT_SSH_PASSW | xclip -selection clipboard

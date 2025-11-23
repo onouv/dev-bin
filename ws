@@ -1,23 +1,44 @@
 #!/bin/bash
+function show_help() {
+  echo "Usage: ws up [options] | down [workspace] | clip (git (ssh  | user) | docker (token | <user>)) | help"
+  echo "ws"
+  echo " . clip"
+  echo "   - git"
+  echo "     - ssh              ssh password for github access token to clipboard"
+  echo "     - user             github user password to clipboard"
+  echo "   - docker"
+  echo "     - token            dockerhub access token to clipboard"
+  echo "     - user             dockerhub user password to clipboard"
+  echo " . up                   start a tmux workspace"
+  echo "   . -k                 ... with a k8s cluster active"
+  echo "     - <namespace>          ... set kubectl namespace, otherwise 'default'"
+  echo " . down                  shut down tmux workspace"
+  echo "  . <workspace>         ... with given name"
+  echo "-----------------------------------------------------------------------------------------"
+  echo "Note:  '.' optional parameter, '-' mandatory alternative parameters, <> user-defined text"
+}
+
+# set up the secrets for use in ws clip if we are not in a session.
+# If we are in ws session, the secrets have been setup already
+if [ -z $(tmux list-sessions) ]; then
+  export DOCKERHUB_TOKEN=W$(pass registries/dockerhub/tokens/build)
+  export DOCKERHUB_USER=rabaul
+  export GITHUB_SSH_PASSW=$(pass repos/github/ssh/vivo_20240212_ed25519)
+  export GITHUB_CLI_TOKEN="$(pass repos/github/token)"
+  export GITHUB_USER=onouv
+fi
+
 first=$1
 shift
+
 if ! [ -z $first ]; then
   if [[ $first == up ]]; then
-    wsup $*
+    ./wsup $*
   elif [[ $first == down ]]; then
-    wsdown $*
+    ./wsdown $*
   elif [[ $first == clip ]]; then
-    second=$1
-    if ! [ -z $second ]; then
-      if [[ $second == git ]]; then
-        gitclip
-      elif [[ $second == docker ]]; then
-        dockerclip
-      fi
-    fi
-  elif [[ $first == help ]]; then
-    wsup --help
+    ./clip $*
   fi
 else
-  echo "Usage: ws up [options] | down [workspace] | clip (git | docker) | help"
+  show_help
 fi

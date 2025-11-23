@@ -10,24 +10,19 @@ function k8s_watch_pods() {
   tmux send-keys -t $pane "kubectl get pods -w" C-m
 }
 
-if [[ "$1" =~ -h ]]; then
-  echo "wsup allows to start up a tmux workspace with several windows and initialized github and dockerhub environment. K8s minikube cluster startup optional."
-  echo "usage: wsup [[-h] | [-k [namespace]]]"
-  echo "-h          this help"
-  echo "-k          with minikube kubernetes cluster"
-  echo "namespace   set kubectl default namespace to namespace"
-  exit 0
-fi
+function show_help() {
+  echo "ws up allows to start up a tmux workspace with several windows and initialized github and dockerhub environment."
+  echo "K8s minikube cluster startup optional."
+  echo
+  echo "ws"
+  echo " . up                   start a tmux workspace"
+  echo "   . -k                 ... with a k8s cluster active"
+  echo "     - <namespace>          ... set kubectl namespace, otherwise 'default'"
+  echo "-----------------------------------------------------------------------------------------"
+  echo "Note:  '.' optional parameter, '-' mandatory alternative parameters, <> user-defined text"
+}
 
-# login dockerhub prep for dockerclip
-DOCKER_PASSW=$(pass registries/dockerhub/tokens/build)
-
-# login github cli
-GITHUB_CLI_TOKEN="$(pass repos/github/token)"
 echo -n "$GITHUB_CLI_TOKEN" | gh auth login -p ssh --with-token
-
-# prep github ssh for gitclip
-GIT_SSH_PASSW=$(pass repos/github/ssh/vivo_20240212_ed25519)
 
 # retrieve tmux session name
 read -p "Session name: " -r session
@@ -40,7 +35,7 @@ if ! [ -z $1 ]; then
     if ! [[ $(timeout 5 kubectl cluster-info) =~ (is running at) ]]; then
       echo "No k8s cluster running..."
 
-      ~/bin/mnk-start
+      ~/bin/mnk up
       if [ $? -lt 0 ]; then
         echo "error while starting up minikube"
         exit -1
@@ -57,7 +52,7 @@ fi
 # We can check $? for the exit status (zero for success, non-zero for failure)
 tmux has-session -t $session 2>/dev/null
 if [ $? != 0 ]; then
-  tmux new-session -d -s $session -e DOCKER_PASSW=$DOCKER_PASSW -e GITHUB_CLI_TOKEN=$GITHUB_CLI_TOKEN -e GIT_SSH_PASSW=$GIT_SSH_PASSW
+  tmux new-session -d -s $session -e DOCKER_USER=$DOCKER_USER -e DOCKER_PASSW=$DOCKER_PASSW -e GITHUB_CLI_TOKEN=$GITHUB_CLI_TOKEN -e GITHUB_SSH_PASSW=$GITHUB_SSH_PASSW -e GITHUB_USER=$GITHUB_USER
   tmux rename-window -t $session:0 "dev"
   tmux new-window -t $session:1 -n "build"
 
@@ -70,6 +65,12 @@ if [ $? != 0 ]; then
     k8s_watch_pods $session:3.0
     k8s_watch_services $session:3.1
     tmux select-pane -t $session:3.2
+
+    tmux new-window -t $session:4 -n "kafka"
+    tmux split-window -t $session:4
+    tmux split-window -t $session:4.0 -h
+    tmux select-pane -t $session:4.2
   fi
+
 fi
 tmux attach-session -t $session:0
