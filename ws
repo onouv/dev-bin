@@ -33,11 +33,11 @@ shift
 
 if ! [ -z $first ]; then
   if [[ $first == up ]]; then
-    ./wsup $*
+    ~/bin-src/wsup $*
   elif [[ $first == down ]]; then
-    ./wsdown $*
+    ~/bin-src/wsdown $*
   elif [[ $first == clip ]]; then
-    ./clip $*
+    ~/bin-src/clip $*
   fi
 else
   show_help
