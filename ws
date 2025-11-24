@@ -5,10 +5,13 @@ function show_help() {
   echo " . clip"
   echo "   - git"
   echo "     - ssh              ssh password for github access token to clipboard"
-  echo "     - user             github user password to clipboard"
+  echo "     - token            githup cli access token to clipboard"
+  echo "     - user             github user name to clipboard"
+  echo "     - password         github user password to clipboard"
   echo "   - docker"
   echo "     - token            dockerhub access token to clipboard"
-  echo "     - user             dockerhub user password to clipboard"
+  echo "     - user             dockerhub user name to clipboard"
+  echo "     - password         dockerhub user password to clipboard"
   echo " . up                   start a tmux workspace"
   echo "   . -k                 ... with a k8s cluster active"
   echo "     - <namespace>          ... set kubectl namespace, otherwise 'default'"
@@ -22,11 +25,13 @@ function show_help() {
 # set up the secrets for use in ws clip if we are not in a session.
 # If we are in ws session, the secrets have been setup already
 if ! { [ -n "$TMUX" ] && [ "$TERM" = "screen" ]; }; then
-  export DOCKERHUB_TOKEN=W$(pass registries/dockerhub/tokens/build)
+  export DOCKERHUB_TOKEN=$(pass registries/dockerhub/tokens/build)
   export DOCKERHUB_USER=rabaul
+  export DOCKERHUB_USER_PASSW=$(pass registries/dockerhub/rabaul)
   export GITHUB_SSH_PASSW=$(pass repos/github/ssh/vivo_20240212_ed25519)
   export GITHUB_CLI_TOKEN="$(pass repos/github/token)"
   export GITHUB_USER=onouv
+  export GITHUB_USER_PASSW=$(pass repos/github/onouv)
 fi
 
 first=$1

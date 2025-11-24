@@ -25,9 +25,6 @@ function show_help() {
 
 echo -n "$GITHUB_CLI_TOKEN" | gh auth login -p ssh --with-token
 
-# retrieve tmux session name
-read -p "Session name: " -r session
-
 #kubernetes requested ?
 if ! [ -z $1 ]; then
   if [[ "$1" =~ -k ]]; then
@@ -52,11 +49,14 @@ if ! [ -z $1 ]; then
   fi
 fi
 
+# retrieve tmux session name
+read -p "Session name: " -r session
+
 # Check if the session exists, discarding output
 # We can check $? for the exit status (zero for success, non-zero for failure)
 tmux has-session -t $session 2>/dev/null
 if [ $? != 0 ]; then
-  tmux new-session -d -s $session -e DOCKER_USER=$DOCKER_USER -e DOCKER_PASSW=$DOCKER_PASSW -e GITHUB_CLI_TOKEN=$GITHUB_CLI_TOKEN -e GITHUB_SSH_PASSW=$GITHUB_SSH_PASSW -e GITHUB_USER=$GITHUB_USER
+  tmux new-session -d -s $session -e DOCKERHUB_TOKEN=$DOCKERHUB_TOKEN -e DOCKER_HUB_USER=$DOCKERHUB__USER -e DOCKER_PASSW=$DOCKERHUB_USER_PASSW -e GITHUB_CLI_TOKEN=$GITHUB_CLI_TOKEN -e GITHUB_SSH_PASSW=$GITHUB_SSH_PASSW -e GITHUB_USER=$GITHUB_USER -e GITHUB_USER_PASSW=$GITHUB_USER_PASSW
   tmux rename-window -t $session:0 "dev"
   tmux new-window -t $session:1 -n "build"
 

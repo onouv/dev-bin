@@ -7,9 +7,11 @@ function show_help() {
   echo "   - git"
   echo "     - ssh              ssh password for github access token to clipboard"
   echo "     - user             github user password to clipboard"
+  echo "     - password         github user password to clipboard"
   echo "   - docker"
   echo "     - token            dockerhub access token to clipboard"
   echo "     - user             dockerhub user password to clipboard"
+  echo "     - password         dockerhub user password to clipboard"
   echo "-----------------------------------------------------------------------------------------"
   echo "Note:  '.' optional alternative parameter, '-' mandatory alternative parameters, <> user-defined text"
 }
@@ -19,9 +21,11 @@ if ! [ -z $1 ]; then
       if [[ $2 == ssh ]]; then
         echo -n "$GITHUB_SSH_PASSW" | xclip -selection clipboard
       elif [[ $2 == cli ]]; then
-        echo -n "$GITHUB_CLI_TOKENi" | xclip -selection clipboard
+        echo -n "$GITHUB_CLI_TOKEN" | xclip -selection clipboard
       elif [[ $2 == user ]]; then
         echo -n "$GITHUB_USER" | xclip -selection clipboard
+      elif [[ $2 == password ]]; then
+        echo -n "$GITHUB_USER_PASSW" | xclip -selection clipboard
       else
         show_help
       fi
@@ -34,6 +38,8 @@ if ! [ -z $1 ]; then
         echo -n "$DOCKERHUB_TOKEN" | xclip -selection clipboard
       elif [[ $2 == user ]]; then
         echo -n "$DOCKERHUB_USER" | xclip -selection clipboard
+      elif [[ $2 == password ]]; then
+        echo -n "$DOCKERHUB_USER_PASSW" | sclip -selection clipboard
       else
         show_help
       fi
