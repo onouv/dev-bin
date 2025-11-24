@@ -11,7 +11,7 @@ function show_help() {
   echo "     - token            dockerhub access token to clipboard"
   echo "     - user             dockerhub user password to clipboard"
   echo "-----------------------------------------------------------------------------------------"
-  echo "Note:  '.' optional parameter, '-' mandatory alternative parameters, <> user-defined text"
+  echo "Note:  '.' optional alternative parameter, '-' mandatory alternative parameters, <> user-defined text"
 }
 if ! [ -z $1 ]; then
   if [[ $1 == git ]]; then

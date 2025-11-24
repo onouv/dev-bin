@@ -9,7 +9,6 @@
 | **`mnk`** |   start, stop minikube with virtualbox or call otherwise |
 | wsup | start up a tmux workspace with github/docker/k8s env |
 | wsdown | kill a tmux workspace |
-| gitclip | take git ssh password into CTRL-SHIFT-V clipboard (in wsup workspace) |
-| dockerclip | take docker password into CTRL-SHIFT-V clipboard (in wsup workspace) |
-| ws | a CLI frontend to wsup, wsdown gitclip and dockerclip |
+| clip | take git snd docker secrets into CTRL-SHIFT-V clipboard |
+| ws | a CLI frontend to wsup, wsdown and clip |
 | unclip | erase CTRL-SHIFT-V clipboard |

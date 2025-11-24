@@ -12,10 +12,11 @@ function show_help() {
   echo " . up                   start a tmux workspace"
   echo "   . -k                 ... with a k8s cluster active"
   echo "     - <namespace>          ... set kubectl namespace, otherwise 'default'"
+  echo "   . help               help text"
   echo " . down                  shut down tmux workspace"
   echo "  . <workspace>         ... with given name"
   echo "-----------------------------------------------------------------------------------------"
-  echo "Note:  '.' optional parameter, '-' mandatory alternative parameters, <> user-defined text"
+  echo "Note:  '.' optional alternative parameter, '-' mandatory alternative parameters, <> user-defined text"
 }
 
 # set up the secrets for use in ws clip if we are not in a session.
