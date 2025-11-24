@@ -1,6 +1,6 @@
 #!/bin/bash
 function show_help() {
-  echo "Usage: ws up [options] | down [workspace] | clip (git (ssh  | user) | docker (token | <user>)) | help"
+  echo "Usage: ws up [options] | down [workspace] | clip (git (ssh  | user) | docker (token | <user>))"
   echo "ws"
   echo " . clip"
   echo "   - git"
@@ -20,7 +20,7 @@ function show_help() {
 
 # set up the secrets for use in ws clip if we are not in a session.
 # If we are in ws session, the secrets have been setup already
-if [ -z $(tmux list-sessions) ]; then
+if ! { [ -n "$TMUX" ] && [ "$TERM" = "screen" ]; }; then
   export DOCKERHUB_TOKEN=W$(pass registries/dockerhub/tokens/build)
   export DOCKERHUB_USER=rabaul
   export GITHUB_SSH_PASSW=$(pass repos/github/ssh/vivo_20240212_ed25519)

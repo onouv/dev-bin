@@ -1,7 +1,7 @@
 #!/bin/bash
 function show_help() {
   echo Bring github or docker passwords into clipboard
-  echo "Usage: ws clip (git (ssh  | user) | docker (token | user)) | help"
+  echo "Usage: ws clip (git (ssh  | user) | docker (token | user))"
   echo "ws"
   echo " . clip"
   echo "   - git"
@@ -17,24 +17,30 @@ if ! [ -z $1 ]; then
   if [[ $1 == git ]]; then
     if ! [ -z $2 ]; then
       if [[ $2 == ssh ]]; then
-        echo -n $GITHUB_SSH_PASSW | xclip -selection clipboard
+        echo -n "$GITHUB_SSH_PASSW" | xclip -selection clipboard
       elif [[ $2 == cli ]]; then
-        echo -n $GITHUB_CLI_TOKEN | xclip -selection clipboard
+        echo -n "$GITHUB_CLI_TOKENi" | xclip -selection clipboard
       elif [[ $2 == user ]]; then
-        echo -n $GITHUB_USER_PASSW | xclip -selection clipboard
+        echo -n "$GITHUB_USER" | xclip -selection clipboard
       else
         show_help
       fi
+    else
+      show_help
     fi
   elif [[ $1 == docker ]]; then
     if ! [ -z $2 ]; then
       if [[ $2 == token ]]; then
-        echo -n | $DOCKERHUB_TOKEN | xclip -selection clipboard
+        echo -n "$DOCKERHUB_TOKEN" | xclip -selection clipboard
       elif [[ $2 == user ]]; then
-        echo -n $DOCKERHUB_USER | xclip -selection clipboard
+        echo -n "$DOCKERHUB_USER" | xclip -selection clipboard
+      else
+        show_help
       fi
     fi
   else
     show_help
   fi
+else
+  show_help
 fi

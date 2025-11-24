@@ -11,13 +11,14 @@ function k8s_watch_pods() {
 }
 
 function show_help() {
-  echo "ws up allows to start up a tmux workspace with several windows and initialized github and dockerhub environment."
+  echo "start up a tmux workspace with several windows and initialized github and dockerhub environment."
   echo "K8s minikube cluster startup optional."
   echo
   echo "ws"
   echo " . up                   start a tmux workspace"
   echo "   . -k                 ... with a k8s cluster active"
   echo "     - <namespace>          ... set kubectl namespace, otherwise 'default'"
+  echo "   . help               this help"
   echo "-----------------------------------------------------------------------------------------"
   echo "Note:  '.' optional parameter, '-' mandatory alternative parameters, <> user-defined text"
 }
@@ -45,6 +46,9 @@ if ! [ -z $1 ]; then
     if ! [ -z $2 ]; then
       kubectl config set-context --current --namespace=$2
     fi
+  elif [[ "$1" == help ]]; then
+    show_help
+    exit
   fi
 fi
 
