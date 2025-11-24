@@ -1,0 +1,19 @@
+#!/bin/bash
+first=$1
+echo $first
+shift
+if ! [ -z $first ]; then
+  if [[ $first == svc ]]; then
+    minikube service list
+  elif [[ $first == up ]]; then
+    minikube start --memory=4096 --driver=virtualbox --insecure-registry "10.0.0.0/24"
+  elif [[ $first == down ]]; then
+    minikube stop
+  elif [[ $first == help ]]; then
+    echo "usage: mnk [ svc | up | down | help ]"
+    echo "'mnk' is a call to minikube"
+    echo "'mnk start' is 'minikube start'"
+  fi
+else
+  minikube $*
+fi

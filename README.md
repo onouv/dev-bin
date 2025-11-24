@@ -6,8 +6,7 @@
 | **`app2dck`** |  build and deploy quarkus to dockerhub/rabaul  |
 | **`app2k8s`** | deploy to kubernetes cluster |
 | **`app-prep-debug`** | prepare ports in k8s for debug |
-| **`mnk-start`** |   start minikube with virtualbox  |
-| **`mnk-services`** |  list the services available on minikube node  |
+| **`mnk`** |   start, stop minikube with virtualbox or call otherwise |
 | wsup | start up a tmux workspace with github/docker/k8s env |
 | wsdown | kill a tmux workspace |
 | gitclip | take git ssh password into CTRL-SHIFT-V clipboard (in wsup workspace) |
