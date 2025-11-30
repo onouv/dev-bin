@@ -39,7 +39,7 @@ if ! [ -z $1 ]; then
       elif [[ $2 == user ]]; then
         echo -n "$DOCKERHUB_USER" | xclip -selection clipboard
       elif [[ $2 == password ]]; then
-        echo -n "$DOCKERHUB_USER_PASSW" | sclip -selection clipboard
+        echo -n "$DOCKERHUB_USER_PASSW" | xclip -selection clipboard
       else
         show_help
       fi

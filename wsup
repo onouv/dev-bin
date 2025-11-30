@@ -10,6 +10,14 @@ function k8s_watch_pods() {
   tmux send-keys -t $pane "kubectl get pods -w" C-m
 }
 
+function k8s_cluster_is_running() {
+  if [ -z "$(kubectl version 2>/dev/null | grep "Server Version")" ]; then
+    echo false
+  else
+    echo true
+  fi
+}
+
 function show_help() {
   echo "start up a tmux workspace with several windows and initialized github and dockerhub environment."
   echo "K8s minikube cluster startup optional."
@@ -19,6 +27,8 @@ function show_help() {
   echo "   . -k                 ... with a k8s cluster active"
   echo "     - <namespace>          ... set kubectl namespace, otherwise 'default'"
   echo "   . help               this help"
+  echo "   . -o                 start an openshift local cluster"
+  echo "     - <namespace>          ... set kubectl namespace, otherwise 'default'"
   echo "-----------------------------------------------------------------------------------------"
   echo "Note:  '.' optional alternative parameter, '-' mandatory alternative parameters, <> user-defined text"
 }
@@ -27,13 +37,12 @@ echo -n "$GITHUB_CLI_TOKEN" | gh auth login -p ssh --with-token
 
 #kubernetes requested ?
 if ! [ -z $1 ]; then
-  if [[ "$1" =~ -k ]]; then
+  if [[ "$1" == -k ]]; then
     k8s_requested=true
     # start a cluster, if not already up
-    if ! [[ $(timeout 5 kubectl cluster-info) =~ (is running at) ]]; then
-      echo "No k8s cluster running..."
-
+    if ! $(k8s_cluster_is_running); then
       ~/bin/mnk up
+      echo "starting minikube..."
       if [ $? -lt 0 ]; then
         echo "error while starting up minikube"
         exit -1
@@ -43,6 +52,22 @@ if ! [ -z $1 ]; then
     if ! [ -z $2 ]; then
       kubectl config set-context --current --namespace=$2
     fi
+  elif [[ "$1" == -o ]]; then
+    k8s_requested=true
+    if ! $(k8s_cluster_is_running); then
+      echo "starting openshift local..."
+      crc start
+      if [ $? -lt 0 ]; then
+        echo "error while starting up openshift"
+        exit -1
+      fi
+      eval $(crc oc-env)
+    fi
+    # set default namespace if requested
+    if ! [ -z $2 ]; then
+      kubectl config set-context --current --namespace=$2
+    fi
+
   elif [[ "$1" == help ]]; then
     show_help
     exit
