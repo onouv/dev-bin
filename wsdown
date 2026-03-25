@@ -9,10 +9,11 @@ else
   if [[ -n $TMUX ]]; then
     # yes
     session=$(tmux display-message -p "#S")
-    read -p "No session name specified - do you mean to kill *this* session [$session] ? (y|N) " -r approval
-    if [ "$approval" = "y" -o "$approval" = "Y" ]; then
-      tmux kill-session -t "$session"
+    read -p "No session name specified - do you mean to kill *this* session [$session] ? (Y|n) " -r approval
+    if [ "$approval" = "n" -o "$approval" = "N" ]; then
+	exit 0
     fi
+    tmux kill-session -t "$session"
   else
     echo "Not in a session."
   fi
