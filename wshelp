@@ -1,0 +1,28 @@
+#!/bin/bash
+function show_help() {
+  echo "ws"
+  echo
+  echo "Usage:"
+  echo "    ws help"
+  echo "    ws up [-k <namespace>]"
+  echo "    ws up [-o <namespace>]"
+  echo "    ws up [-n]"
+  echo "    ws down [<workspace-name>]"
+  echo "    ws clip git (ssh | token | user | password)"
+  echo "    ws clip docker (token | user | password)"
+  echo
+  echo "Description:"
+  echo "    Start up a tmux workspace with several windows and initialized github and dockerhub environment."
+  echo
+  echo "Commands:"
+  echo "    up                  start a tmux workspace or enter an existing one"
+  echo "    down                take down tmux workspace"
+  echo "    exit                leave workspace (may return later)"
+  echo
+  echo "Options:"
+  echo "    -k [<namespace>]    start minikube cluster and k8s control window, set kubectl namespace, otherwise 'default'"
+  echo "    -n                  with nats control window"
+  echo "    -o [<namespace>]    start openshift local cluster and k8s control window, set kubectl namespace, otherwise 'default'"
+}
+
+

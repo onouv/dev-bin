@@ -1,29 +1,10 @@
 #!/bin/bash
-function show_help() {
-  echo "Usage: ws up [options] | down [workspace] | clip (git (ssh  | user) | docker (token | <user>))"
-  echo "ws"
-  echo " . clip"
-  echo "   - git"
-  echo "     - ssh              ssh password for github access token to clipboard"
-  echo "     - token            githup cli access token to clipboard"
-  echo "     - user             github user name to clipboard"
-  echo "     - password         github user password to clipboard"
-  echo "   - docker"
-  echo "     - token            dockerhub access token to clipboard"
-  echo "     - user             dockerhub user name to clipboard"
-  echo "     - password         dockerhub user password to clipboard"
-  echo " . up                   start a tmux workspace"
-  echo "   . -k                 ... with a minikube k8s cluster active"
-  echo "     - <namespace>          ... set kubectl namespace, otherwise 'default'"
-  echo "   . -o                 start an openshift local cluster"
-  echo "     - <namespace>          ... set kubectl namespace, otherwise 'default'"
-  echo "   . help               help text"
-  echo " . down                  shut down tmux workspace"
-  echo "  . <workspace>         ... with given name"
-  echo "-----------------------------------------------------------------------------------------"
-  echo "Note:  '.' optional alternative parameter, '-' mandatory alternative parameters, <> user-defined text"
-}
+source ~/bin-src/wshelp
 
+if [ -z $1 ]; then
+  show_help
+  exit 0
+fi
 # set up the secrets for use in ws clip if we are not in a session.
 # If we are in ws session, the secrets have been setup already
 if ! { [ -n "$TMUX" ] && [ "$TERM" = "screen" ]; }; then
@@ -46,6 +27,8 @@ if ! [ -z $first ]; then
     ~/bin-src/wsdown $*
   elif [[ $first == clip ]]; then
     ~/bin-src/clip $*
+  elif [[ $first == exit ]]; then
+    tmux detach
   fi
 else
   show_help

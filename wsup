@@ -1,5 +1,7 @@
 #!/bin/bash
 
+source ~/bin-src/wshelp
+
 function k8s_watch_services() {
   pane=$1
   tmux send-keys -t $pane "kubectl get svc -w" C-m
@@ -10,27 +12,17 @@ function k8s_watch_pods() {
   tmux send-keys -t $pane "kubectl get pods -w" C-m
 }
 
+function list_containers() {
+  pane=$1
+  tmux send-keys -t $pane "docker container ls -a"
+}
+
 function k8s_cluster_is_running() {
   if [ -z "$(kubectl version 2>/dev/null | grep "Server Version")" ]; then
     echo false
   else
     echo true
   fi
-}
-
-function show_help() {
-  echo "start up a tmux workspace with several windows and initialized github and dockerhub environment."
-  echo "K8s minikube cluster startup optional."
-  echo
-  echo "ws"
-  echo " . up                   start a tmux workspace"
-  echo "   . -k                 ... with a k8s cluster active"
-  echo "     - <namespace>          ... set kubectl namespace, otherwise 'default'"
-  echo "   . help               this help"
-  echo "   . -o                 start an openshift local cluster"
-  echo "     - <namespace>          ... set kubectl namespace, otherwise 'default'"
-  echo "-----------------------------------------------------------------------------------------"
-  echo "Note:  '.' optional alternative parameter, '-' mandatory alternative parameters, <> user-defined text"
 }
 
 echo -n "$GITHUB_CLI_TOKEN" | gh auth login -p ssh --with-token
@@ -83,23 +75,29 @@ tmux has-session -t $session 2>/dev/null
 if [ $? != 0 ]; then
   tmux new-session -d -s $session -e DOCKERHUB_TOKEN=$DOCKERHUB_TOKEN -e DOCKER_HUB_USER=$DOCKERHUB__USER -e DOCKER_PASSW=$DOCKERHUB_USER_PASSW -e GITHUB_CLI_TOKEN=$GITHUB_CLI_TOKEN -e GITHUB_SSH_PASSW=$GITHUB_SSH_PASSW -e GITHUB_USER=$GITHUB_USER -e GITHUB_USER_PASSW=$GITHUB_USER_PASSW
   tmux rename-window -t $session:0 "dev"
+
   tmux new-window -t $session:1 -n "build"
 
-  tmux new-window -t $session:2 -n "test"
+  tmux new-window -t $session:2 -n "run"
+  tmux split-window -t $session:2
+  list_containers $session:2.0
+  tmux select-pane -t $session:2.1
+
+  tmux new-window -t $session:3 -n "test"
+
+  tmux new-window -t $session:4 -n "NATS"
+  tmux split-window -t $session:4
+  tmux split-window -t $session:4.0 -h
+  tmux select-pane -t $session:4.1
 
   if [ "$k8s_requested" = true ]; then
-    tmux new-window -t $session:3 -n "k8s"
-    tmux split-window -t $session:3
-    tmux split-window -t $session:3.0 -h
-    k8s_watch_pods $session:3.0
-    k8s_watch_services $session:3.1
-    tmux select-pane -t $session:3.2
-
-    tmux new-window -t $session:4 -n "kafka"
-    tmux split-window -t $session:4
-    tmux split-window -t $session:4.0 -h
-    tmux select-pane -t $session:4.2
+    tmux new-window -t $session:5 -n "k8s"
+    tmux split-window -t $session:5
+    tmux split-window -t $session:5.0 -h
+    k8s_watch_pods $session:5.0
+    k8s_watch_services $session:5.1
+    tmux select-pane -t $session:5.2
   fi
-
 fi
+
 tmux attach-session -t $session:0
