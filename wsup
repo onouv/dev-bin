@@ -4,17 +4,17 @@ source ~/bin-src/wshelp
 
 function k8s_watch_services() {
   pane=$1
-  tmux send-keys -t $pane "kubectl get svc -w" C-m
+  tmux send-keys -t $pane "kubectl get svc -w" Enter
 }
 
 function k8s_watch_pods() {
   pane=$1
-  tmux send-keys -t $pane "kubectl get pods -w" C-m
+  tmux send-keys -t $pane "kubectl get pods -w" Enter
 }
 
 function list_containers() {
   pane=$1
-  tmux send-keys -t $pane "docker container ls -a"
+  tmux send-keys -t $pane "docker container ls -a" Enter
 }
 
 function k8s_cluster_is_running() {
@@ -77,6 +77,9 @@ if [ $? != 0 ]; then
   tmux rename-window -t $session:0 "dev"
 
   tmux new-window -t $session:1 -n "build"
+  tmux split-window -t $session:1
+  tmux send-keys -t $session:1.0 "gst" Enter
+  tmux send-keys -t $session:1.1 "glola" Enter
 
   tmux new-window -t $session:2 -n "run"
   tmux split-window -t $session:2
@@ -90,13 +93,18 @@ if [ $? != 0 ]; then
   tmux split-window -t $session:4.0 -h
   tmux select-pane -t $session:4.1
 
+  tmux new-window -t $session:5 -n "postgres"
+  tmux split-window -t $session:5
+  tmux split-window -t $session:5.0 -h
+  tmux select-pane -t $session:5.1
+
   if [ "$k8s_requested" = true ]; then
-    tmux new-window -t $session:5 -n "k8s"
-    tmux split-window -t $session:5
-    tmux split-window -t $session:5.0 -h
-    k8s_watch_pods $session:5.0
-    k8s_watch_services $session:5.1
-    tmux select-pane -t $session:5.2
+    tmux new-window -t $session:6 -n "k8s"
+    tmux split-window -t $session:6
+    tmux split-window -t $session:6.0 -h
+    k8s_watch_pods $session:6.0
+    k8s_watch_services $session:6.1
+    tmux select-pane -t $session:6.2
   fi
 fi
 

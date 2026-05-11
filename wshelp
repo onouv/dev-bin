@@ -3,7 +3,7 @@ function show_help() {
   echo "ws"
   echo
   echo "Usage:"
-  echo "    ws help"
+  echo "    ws"
   echo "    ws up [-k <namespace>]"
   echo "    ws up [-o <namespace>]"
   echo "    ws up [-n]"
@@ -24,5 +24,3 @@ function show_help() {
   echo "    -n                  with nats control window"
   echo "    -o [<namespace>]    start openshift local cluster and k8s control window, set kubectl namespace, otherwise 'default'"
 }
-
-
